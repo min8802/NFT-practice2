@@ -27,7 +27,7 @@ import {
         <ModalContent>
           <ModalHeader>민팅 성공!</ModalHeader>
           <ModalCloseButton />
-          <ModalBody bgColor="red.100" display="flex" flexDir="column" alignItems="center">
+          <ModalBody display="flex" flexDir="column" alignItems="center">
             <Image
               w={60}
               h={60}
