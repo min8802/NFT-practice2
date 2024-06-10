@@ -23,11 +23,13 @@ import { formatEther } from "ethers";
     nftMetadata: NftMetadata;
     tokenId: number;
     saleContract: Contract | null;
+    isApprovedForAll: boolean;
   }
   
-  const NftCard: FC<NftCardProps> = ({ nftMetadata, tokenId, saleContract }) => {
+  const NftCard: FC<NftCardProps> = ({ nftMetadata, tokenId, saleContract, isApprovedForAll }) => {
     const [currentPrice, setCurrentPrice] = useState<bigint>();
     const [salePrice, setSalePrice] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     
     const getTokenPrice = async () => {
       try {
@@ -43,18 +45,24 @@ import { formatEther } from "ethers";
         try {
           if (!salePrice || isNaN(Number(salePrice))) return;
     
+          setIsLoading(true);
+    
           const response = await saleContract?.setForSaleNft(
             tokenId,
             parseEther(salePrice)
           );
     
           await response.wait();
-
+    
           setCurrentPrice(parseEther(salePrice));
+    
+          setIsLoading(false);
         } catch (error) {
           console.error(error);
+    
+          setIsLoading(false);
         }
-    };
+      };
   
     useEffect(() => {
       if (!saleContract || !tokenId) return;
@@ -95,16 +103,30 @@ import { formatEther } from "ethers";
             </Box>
           ))}
         </Flex>
-        <Flex>{currentPrice ? <Text>{formatEther(currentPrice)} ETH</Text>
-         : (
+        <Flex>
+            {currentPrice ? <Text>{formatEther(currentPrice)} ETH</Text>
+         : isApprovedForAll ? (
             <>
-                <InputGroup>
-                <Input textAlign="right" value={salePrice} onChange={(e) => {setSalePrice(e.target.value)}}/>
-                <InputRightAddon>ETH</InputRightAddon>
-                </InputGroup>
-                <Button ml={2} onClick={onClickSetForSaleNft}>등록</Button>
-            </>
-         )}</Flex>
+            <InputGroup>
+              <Input
+                value={salePrice}
+                onChange={(e) => setSalePrice(e.target.value)}
+                textAlign="right"
+                isDisabled={isLoading}
+              />
+              <InputRightAddon>ETH</InputRightAddon>
+            </InputGroup>
+            <Button
+              ml={2}
+              onClick={onClickSetForSaleNft}
+              isDisabled={isLoading}
+              isLoading={isLoading}
+              loadingText="로딩중"
+            >
+              등록
+            </Button>
+          </>
+         ) : ("")}</Flex>
       </GridItem>
     );
   };
