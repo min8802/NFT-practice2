@@ -13,6 +13,7 @@ export interface OutletContext {
 const Layout: FC = () => {
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const [mintContract, setMintContract] = useState<Contract | null>(null);
+  const [saleContract, setSaleContract] = useState<Contract | null>(null);
 
   return (
     <Flex maxW={768} mx="auto" minH="100vh" flexDir="column">
@@ -20,9 +21,10 @@ const Layout: FC = () => {
         signer={signer}
         setSigner={setSigner}
         setMintContract={setMintContract}
+        setSaleContract={setSaleContract}
       />
       <Flex flexGrow={1}>
-        <Outlet context={{ mintContract , signer}} />
+        <Outlet context={{ mintContract , signer, saleContract}} />
       </Flex>
     </Flex>
   );

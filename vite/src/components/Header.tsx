@@ -14,14 +14,18 @@ import {
   import { useNavigate } from "react-router-dom";
   
   import mintAbi from "../abis/mintAbi.json";
+  import saleAbi from "../abis/saleAbi.json";
+  import { mintContractAddress, saleContractAddress } from "../abis/contractAddress";
+  mintContractAddress
   
   interface HeaderProps {
     signer: JsonRpcSigner | null;
     setSigner: Dispatch<SetStateAction<JsonRpcSigner | null>>;
     setMintContract: Dispatch<SetStateAction<Contract | null>>;
+    setSaleContract: Dispatch<SetStateAction<Contract | null>>;
   }
   
-  const Header: FC<HeaderProps> = ({ signer, setSigner, setMintContract }) => {
+  const Header: FC<HeaderProps> = ({ signer, setSigner, setMintContract, setSaleContract }) => {
     const navigate = useNavigate();
   
     const onClickMetamask = async () => {
@@ -45,8 +49,15 @@ import {
   
       setMintContract(
         new Contract(
-          "0x3b3369a2d407a1B37A488e78191C847d1c710dBe",
+          mintContractAddress,
           mintAbi,
+          signer
+        )
+      );
+      setSaleContract(
+        new Contract(
+          saleContractAddress,
+          saleAbi,
           signer
         )
       );
@@ -57,7 +68,7 @@ import {
         <Flex
           flexDir={["column", "column", "row"]}
           w={40}
-          fontSize={[16, 16, 20]}
+          fontSize={16}
           fontWeight="semibold"
           alignItems="center"
         >
